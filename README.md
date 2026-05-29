@@ -1,187 +1,190 @@
-# Polymarket AI Trading Bot
+# Polymarket AI 交易机器人
 
-Autonomous trading agent for Polymarket prediction markets. Discovers markets, researches evidence, forecasts probabilities with a multi-model AI ensemble, and executes trades with strict risk controls.
+面向 Polymarket 预测市场的自主交易代理。自动发现市场、搜集证据、通过多模型 AI 集成预测概率，并在严格风控下执行交易。
 
-Paper trading by default. Three safety gates must be unlocked for live orders.
+默认模拟交易（Paper Trading）。实盘下单需解锁三道安全门。
 
-> **Need help or an updated version?**  
-> **Telegram:** [t.me/dexoryn777](https://t.me/dexoryn777)
+> **需要帮助或获取更新版本？**  
+> **Telegram：** [t.me/dexoryn777](https://t.me/dexoryn777)  
+> **微信：** 扫描下方二维码添加 **DexorynWe**
 
----
-
-## Why This Polymarket AI Agent
-
-Most Polymarket tools either mirror another wallet or require you to manually research, price, and size every market. This agent runs the full loop autonomously — discovery, evidence gathering, probability forecasting, risk checks, and execution — so you can focus on configuration and oversight instead of clicking through hundreds of markets.
-
-### End-to-end autonomy, not copy-trading
-
-- **Independent forecasts** — a 3-model LLM ensemble (GPT-4o, Claude, Gemini) estimates probabilities without anchoring to the current market price
-- **Autonomous research** — category-aware web search, HTML extraction, and domain authority scoring pull evidence from primary sources (`bls.gov`, `sec.gov`, `fec.gov`, and more)
-- **Self-improving calibration** — Platt scaling, Brier score tracking, and automatic retraining after resolved markets tighten forecasts over time
-
-### Built for serious risk control
-
-- **15+ pre-trade checks** — drawdown heat, Kelly sizing, liquidity/spread filters, category exposure caps, and more; one failure blocks the trade
-- **Triple dry-run gate** — paper trading by default; live orders require three independent unlocks
-- **Whale intelligence** — tracks smart-money wallets and adjusts edge when whales agree or disagree with the model
-
-### Production-ready observability
-
-- **9-tab live dashboard** — engine status, positions, forecasts, risk, smart money, and performance metrics on port 2345
-- **Immutable audit trail** — every decision logged with SHA-256 integrity checksums
-- **Multi-channel alerts** — Telegram, Discord, and Slack for trades, drawdown warnings, and errors
-
-### How it compares
-
-| Capability | This AI Agent | Typical alternatives |
-|------------|---------------|----------------------|
-| **Autonomous research & forecasting** | Yes — full pipeline | Copy bots only mirror wallets |
-| **Multi-model ensemble** | 3 LLMs with adaptive weighting | Single model or manual guesses |
-| **Calibration feedback loop** | Retrains from resolved markets | Static or no calibration |
-| **Risk management depth** | 15+ checks + drawdown heat | Basic limits or none |
-| **Smart money integration** | Whale scanner + edge adjustment | Wallet copy only |
-| **Paper trading default** | Triple safety gate | Often live-only or no guardrails |
-| **Live dashboard & audit trail** | 9-tab dashboard + SHA-256 logs | CLI-only or opaque |
+[English README](README.en.md)
 
 ---
 
-## Features
+## 为什么选择这款 Polymarket AI 代理
 
-### Market Discovery & Classification
+大多数 Polymarket 工具要么复制他人钱包，要么要求你手动研究、定价、定仓每个市场。本代理自主运行完整闭环——发现、证据搜集、概率预测、风控检查、执行——让你专注于配置与监督，而不是在数百个市场中逐一点击。
 
-- Scans active markets from the Polymarket Gamma API with volume, liquidity, and spread filters
-- 11-category classifier (MACRO, ELECTION, CORPORATE, LEGAL, TECHNOLOGY, SCIENCE, CRYPTO, REGULATION, GEOPOLITICS, SPORTS, ENTERTAINMENT) using 100+ regex rules — no LLM cost
-- Each market gets a researchability score (0–100) that controls how much research budget it receives
-- Pre-research quality filter blocks junk markets before any expensive API calls (~90% cost savings)
-- Configurable cooldowns prevent re-scanning the same market too frequently
+### 端到端自主，而非跟单
 
-### Autonomous Research Engine
+- **独立预测** — 三模型 LLM 集成（GPT-4o、Claude、Gemini）估算概率，不锚定当前市场价格
+- **自主研究** — 按类别定向网页搜索、HTML 提取、域名权威评分，从一手来源（`bls.gov`、`sec.gov`、`fec.gov` 等）拉取证据
+- **自我校准** — Platt 缩放、Brier 分数追踪、市场结算后自动重训，随时间收紧预测
 
-- Query builder generates site-restricted searches per category — `site:bls.gov` for macro, `site:sec.gov` for corporate, `site:fec.gov` for elections
-- Includes contrarian queries to avoid confirmation bias
-- 3 pluggable search backends — SerpAPI, Bing, Tavily — with automatic fallback if one fails
-- Full HTML extraction via BeautifulSoup, not just search snippets
-- Domain authority scoring — primary sources (1.0) > secondary (0.6) > unknown (0.3)
-- Auto-filters low-quality domains (Wikipedia, Reddit, Medium, Twitter, TikTok)
-- Source caching with configurable TTL (default 1 hour)
+### 为严肃风控而设计
 
-### Multi-Model AI Forecasting
+- **15+ 项交易前检查** — 回撤热度、Kelly 仓位、流动性/价差过滤、类别敞口上限等；任一失败即阻止交易
+- **三重模拟门** — 默认模拟交易；实盘需三道独立解锁
+- **巨鲸情报** — 追踪聪明钱钱包，巨鲸与模型一致或分歧时调整边际优势（Edge）
 
-- Ensemble of 3 frontier LLMs running in parallel:
-  - GPT-4o (40% weight) — primary forecaster
-  - Claude 3.5 Sonnet (35% weight) — second opinion
-  - Gemini 1.5 Pro (25% weight) — third opinion
-- 3 aggregation methods — trimmed mean, median, or weighted average
-- Models forecast independently — explicitly told not to anchor to the current market price
-- Graceful degradation — if a model fails, the ensemble continues with the remaining models
-- Adaptive weighting — tracks per-model Brier scores by category and reweights over time
+### 生产级可观测性
 
-### Calibration & Self-Improvement
+- **9 标签页实时仪表盘** — 引擎状态、持仓、预测、风控、聪明钱、绩效指标，端口 2345
+- **不可篡改审计链** — 每笔决策记录 SHA-256 完整性校验
+- **多渠道告警** — Telegram、Discord、Slack，覆盖交易、回撤警告与错误
 
-- Platt scaling — logistic compression pulling extreme probabilities toward 0.50
-- Historical calibration — learns from past forecast vs. outcome pairs via logistic regression
-- Evidence quality penalty — weak evidence pulls the forecast toward 0.50
-- Contradiction penalty — conflicting sources increase uncertainty
-- Ensemble spread penalty — when models disagree by more than 10%, adds uncertainty
-- Calibration feedback loop — retrains automatically after 30+ resolved markets
-- Brier score tracking — monitors forecast accuracy over time
+### 功能对比
 
-### Risk Management (15+ Checks)
-
-Every trade must pass all of these — a single failure blocks the trade:
-
-- Kill switch — manual emergency halt
-- Drawdown auto-kill at 20% max drawdown
-- 4-level drawdown heat system:
-  - Normal (< 10%) → full sizing
-  - Warning (≥ 10%) → half sizing
-  - Critical (≥ 15%) → quarter sizing
-  - Max (≥ 20%) → all trading halted
-- Max stake per market ($50 default)
-- Daily loss limit ($500 default)
-- Max open positions (25)
-- Minimum net edge after fees (4%)
-- Minimum liquidity ($2,000)
-- Maximum spread (6%)
-- Evidence quality threshold (0.55)
-- Confidence filter (MEDIUM minimum)
-- Implied probability floor (5%)
-- Portfolio category exposure cap (35% per category)
-- Timeline endgame check (48h near resolution)
-- Arbitrage detection — scans for mispriced complementary and multi-outcome markets
-
-### Execution Engine
-
-- Fractional Kelly position sizing with 7 multipliers (confidence, drawdown, timeline, volatility, regime, category, liquidity)
-- Auto strategy selection:
-  - Simple — single limit order for small trades
-  - TWAP — splits large orders into 5 time-weighted slices
-  - Iceberg — shows only 20% of true order size
-  - Adaptive — adjusts pricing based on orderbook depth
-- Triple dry-run safety gate:
-  - `dry_run` flag on each order object
-  - `execution.dry_run` in config.yaml
-  - `ENABLE_LIVE_TRADING` environment variable
-  - All three must allow it for a real order to go through
-- Fill tracker — monitors fill rate, slippage, and time-to-fill per strategy
-- 6 exit strategies — dynamic stop-loss, trailing stop, hold-to-resolution, time-based exit, edge reversal, kill switch forced exit
-
-### Whale & Smart Money Intelligence
-
-- Wallet scanner tracks top Polymarket traders seeded from the leaderboard
-- Auto-discovers top 50 wallets by profit and top 50 by volume
-- Delta detection — spots new entries, exits, size increases, and decreases
-- Conviction scoring — combines whale count × dollar size into a signal
-- Edge integration — whales agree with model → +8% edge boost; disagree → -2% penalty
-- 7-phase liquid scanner pipeline:
-  - Seeds wallets from leaderboard → fetches markets → scans global trades → per-market whale scan → ranks addresses → deep wallet analysis → scores and saves to database
-- API pool rotates requests across multiple endpoints with round-robin, least-loaded, or weighted-random strategies
-
-### Market Microstructure
-
-- Order flow imbalance across 60min, 4hr, and 24hr windows
-- VWAP divergence — signals entry when price is below volume-weighted average
-- Whale order detection — flags individual trades above $2,000
-- Trade acceleration — detects unusual activity surges (>2× baseline)
-- Book depth ratio — measures bid vs. ask pressure
-- Smart entry calculator — combines all signals to recommend optimal entry price
-
-### Real-Time Dashboard
-
-9-tab Flask dashboard with glassmorphism dark theme on port 2345:
-
-- **Overview** — engine status, cycle count, P&L, equity curve
-- **Trading Engine** — start/stop controls, cycle history, pipeline visualization
-- **Positions** — open positions with live P&L, closed trade history
-- **Forecasts** — evidence breakdown, model vs. market probability, reasoning
-- **Risk & Drawdown** — drawdown gauge, heat level, Kelly multiplier, exposure breakdown
-- **Smart Money** — tracked wallets, conviction signals, whale activity feed
-- **Liquid Scanner** — 7-phase pipeline status, discovered candidates, API pool health
-- **Performance** — win rate, ROI, Sharpe, Sortino, Calmar, category breakdown, model accuracy
-- **Settings** — environment status, config viewer, kill switch toggle
-
-Protected by `DASHBOARD_API_KEY`. Auto-refreshing with live status indicators.
-
-### Observability & Alerting
-
-- structlog JSON logging with automatic sensitive data redaction
-- Multi-channel alerts — Telegram, Discord, Slack (with cooldowns to prevent spam)
-- Alert triggers — trades, drawdown warnings, kill switch activations, errors, daily summaries
-- Sentry integration — optional error tracking with data scrubbing
-- API cost tracking — per-call cost estimation for LLM and search usage
-- JSON run reports — exportable reports saved to `reports/`
-
-### Storage & Audit
-
-- SQLite with WAL mode for concurrent reads and writes
-- 10 automatic schema migrations
-- Immutable audit trail — every decision recorded with SHA-256 integrity checksums
-- TTL cache — search results (1hr), orderbook (30s), LLM responses (30min), market list (5min)
-- Automated backups with rotation (max 10), triggered via `make backup`
+| 能力 | 本 AI 代理 | 常见替代方案 |
+|------|-----------|-------------|
+| **自主研究与预测** | 是 — 完整流水线 | 跟单机器人仅复制钱包 |
+| **多模型集成** | 3 个 LLM + 自适应权重 | 单模型或人工猜测 |
+| **校准反馈闭环** | 从已结算市场重训 | 静态或无校准 |
+| **风控深度** | 15+ 检查 + 回撤热度 | 基础限制或无 |
+| **聪明钱集成** | 巨鲸扫描 + Edge 调整 | 仅钱包复制 |
+| **默认模拟交易** | 三重安全门 | 常仅实盘或无防护 |
+| **实时仪表盘与审计** | 9 标签页 + SHA-256 日志 | 仅 CLI 或不透明 |
 
 ---
 
-## Quick Start
+## 功能特性
+
+### 市场发现与分类
+
+- 通过 Polymarket Gamma API 扫描活跃市场，按成交量、流动性、价差过滤
+- 11 类分类器（宏观、选举、企业、法律、科技、科学、加密、监管、地缘政治、体育、娱乐），100+ 正则规则，无 LLM 成本
+- 每个市场获得可研究性评分（0–100），控制研究预算分配
+- 研究前质量过滤，在昂贵 API 调用前拦截垃圾市场（约节省 90% 成本）
+- 可配置冷却时间，避免频繁重复扫描同一市场
+
+### 自主研究引擎
+
+- 查询构建器按类别生成站点限定搜索 — 宏观用 `site:bls.gov`，企业用 `site:sec.gov`，选举用 `site:fec.gov`
+- 包含反向查询，避免确认偏误
+- 3 个可插拔搜索后端 — SerpAPI、Bing、Tavily — 失败时自动降级
+- 通过 BeautifulSoup 完整 HTML 提取，而非仅搜索摘要
+- 域名权威评分 — 一手来源（1.0）> 二手（0.6）> 未知（0.3）
+- 自动过滤低质量域名（Wikipedia、Reddit、Medium、Twitter、TikTok）
+- 来源缓存，可配置 TTL（默认 1 小时）
+
+### 多模型 AI 预测
+
+- 3 个前沿 LLM 并行集成：
+  - GPT-4o（权重 40%）— 主预测器
+  - Claude 3.5 Sonnet（权重 35%）— 第二意见
+  - Gemini 1.5 Pro（权重 25%）— 第三意见
+- 3 种聚合方法 — 截尾均值、中位数、加权平均
+- 模型独立预测 — 明确禁止锚定当前市场价格
+- 优雅降级 — 某模型失败时，集成继续使用其余模型
+- 自适应权重 — 按类别追踪各模型 Brier 分数并随时间重加权
+
+### 校准与自我改进
+
+- Platt 缩放 — 逻辑压缩，将极端概率拉向 0.50
+- 历史校准 — 通过逻辑回归从过往预测 vs 结果对学习
+- 证据质量惩罚 — 弱证据将预测拉向 0.50
+- 矛盾惩罚 — 冲突来源增加不确定性
+- 集成分歧惩罚 — 模型分歧超过 10% 时增加不确定性
+- 校准反馈闭环 — 30+ 已结算市场后自动重训
+- Brier 分数追踪 — 监控预测准确度随时间变化
+
+### 风险管理（15+ 项检查）
+
+每笔交易须全部通过 — 任一失败即阻止：
+
+- 紧急停止开关（Kill Switch）
+- 最大回撤 20% 时自动停止
+- 四级回撤热度系统：
+  - 正常（< 10%）→ 全仓
+  - 警告（≥ 10%）→ 半仓
+  - 严重（≥ 15%）→ 四分之一仓
+  - 最大（≥ 20%）→ 全部交易停止
+- 单市场最大下注（默认 $50）
+- 日亏损上限（默认 $500）
+- 最大持仓数（25）
+- 扣费后最小净 Edge（4%）
+- 最小流动性（$2,000）
+- 最大价差（6%）
+- 证据质量阈值（0.55）
+- 置信度过滤（最低 MEDIUM）
+- 隐含概率下限（5%）
+- 组合类别敞口上限（每类 35%）
+- 时间线终局检查（结算前 48 小时）
+- 套利检测 — 扫描定价错误的互补与多结果市场
+
+### 执行引擎
+
+- 分数 Kelly 仓位，7 个乘数（置信度、回撤、时间线、波动率、体制、类别、流动性）
+- 自动策略选择：
+  - Simple — 小单限价单
+  - TWAP — 大单拆成 5 个时间加权切片
+  - Iceberg — 仅显示真实订单量的 20%
+  - Adaptive — 按订单簿深度调整定价
+- 三重模拟安全门：
+  - 订单对象上的 `dry_run` 标志
+  - `config.yaml` 中的 `execution.dry_run`
+  - 环境变量 `ENABLE_LIVE_TRADING`
+  - 三者均允许时，真实订单才会发出
+- 成交追踪 — 监控各策略的成交率、滑点、成交时间
+- 6 种退出策略 — 动态止损、追踪止损、持有至结算、时间退出、Edge 反转、Kill Switch 强制退出
+
+### 巨鲸与聪明钱情报
+
+- 钱包扫描器追踪从排行榜种子的 Polymarket 顶级交易者
+- 自动发现利润前 50 与成交量前 50 钱包
+- 增量检测 — 发现新建仓、平仓、加仓、减仓
+- 信念评分 — 巨鲸数量 × 美元规模合成信号
+- Edge 集成 — 巨鲸与模型一致 → +8% Edge 加成；分歧 → -2% 惩罚
+- 7 阶段流动性扫描流水线：
+  - 从排行榜种子钱包 → 拉取市场 → 扫描全局成交 → 逐市场巨鲸扫描 → 地址排名 → 深度钱包分析 → 评分入库
+- API 池在多个端点间轮询，支持 round-robin、最少负载、加权随机策略
+
+### 市场微观结构
+
+- 60 分钟、4 小时、24 小时窗口的订单流失衡
+- VWAP 偏离 — 价格低于成交量加权均价时发出入场信号
+- 巨鲸订单检测 — 标记单笔超过 $2,000 的成交
+- 成交加速 — 检测异常活动激增（>2× 基线）
+- 订单簿深度比 — 衡量买卖盘压力
+- 智能入场计算器 — 综合所有信号推荐最优入场价
+
+### 实时仪表盘
+
+9 标签页 Flask 仪表盘，玻璃拟态暗色主题，端口 2345：
+
+- **概览** — 引擎状态、循环次数、盈亏、权益曲线
+- **交易引擎** — 启停控制、循环历史、流水线可视化
+- **持仓** — 开仓实时盈亏、已平仓历史
+- **预测** — 证据分解、模型 vs 市场概率、推理过程
+- **风控与回撤** — 回撤仪表、热度等级、Kelly 乘数、敞口分解
+- **聪明钱** — 追踪钱包、信念信号、巨鲸活动流
+- **流动性扫描** — 7 阶段流水线状态、发现候选、API 池健康
+- **绩效** — 胜率、ROI、Sharpe、Sortino、Calmar、类别分解、模型准确度
+- **设置** — 环境状态、配置查看、Kill Switch 开关
+
+由 `DASHBOARD_API_KEY` 保护。自动刷新，带实时状态指示。
+
+### 可观测性与告警
+
+- structlog JSON 日志，自动脱敏敏感数据
+- 多渠道告警 — Telegram、Discord、Slack（带冷却防刷屏）
+- 告警触发 — 交易、回撤警告、Kill Switch 激活、错误、日汇总
+- Sentry 集成 — 可选错误追踪与数据清洗
+- API 成本追踪 — 按调用估算 LLM 与搜索费用
+- JSON 运行报告 — 可导出至 `reports/`
+
+### 存储与审计
+
+- SQLite WAL 模式，支持并发读写
+- 10 次自动 schema 迁移
+- 不可篡改审计链 — 每笔决策 SHA-256 完整性校验
+- TTL 缓存 — 搜索结果（1 小时）、订单簿（30 秒）、LLM 响应（30 分钟）、市场列表（5 分钟）
+- 自动备份与轮转（最多 10 份），通过 `make backup` 触发
+
+---
+
+## 快速开始
 
 ```
 git clone https://github.com/dylanpersonguy/polymarket-ai-trading-bot.git
@@ -191,15 +194,15 @@ pip install -e ".[dev]"
 cp .env.example .env
 ```
 
-Add your API keys to `.env` — at minimum `OPENAI_API_KEY` and `SERPAPI_KEY`.
+在 `.env` 中添加 API 密钥 — 至少需要 `OPENAI_API_KEY` 和 `SERPAPI_KEY`。
 
 ```
 make dashboard
 ```
 
-Open **http://localhost:2345**.
+打开 **http://localhost:2345**。
 
-**Help:** Telegram [@dexoryn777](https://t.me/dexoryn777)
+**帮助：** Telegram [@dexoryn777](https://t.me/dexoryn777)
 
 ---
 
@@ -212,47 +215,47 @@ docker compose up -d
 
 ---
 
-## CLI
+## CLI 命令
 
 ```
-bot scan --limit 20            # discover markets
-bot research --market <ID>     # research a market
-bot forecast --market <ID>     # full pipeline: research, forecast, risk, size
-bot paper-trade --market <ID>  # simulated trade
-bot trade --market <ID>        # live trade (needs ENABLE_LIVE_TRADING=true)
-bot engine start               # continuous trading loop
-bot engine status              # engine health
-bot dashboard                  # launch dashboard
-bot portfolio                  # portfolio risk report
-bot drawdown                   # drawdown status
-bot arbitrage                  # scan for arbitrage
-bot alerts                     # alert history
+bot scan --limit 20            # 发现市场
+bot research --market <ID>     # 研究某市场
+bot forecast --market <ID>     # 完整流水线：研究、预测、风控、定仓
+bot paper-trade --market <ID>  # 模拟交易
+bot trade --market <ID>        # 实盘交易（需 ENABLE_LIVE_TRADING=true）
+bot engine start               # 持续交易循环
+bot engine status              # 引擎健康状态
+bot dashboard                  # 启动仪表盘
+bot portfolio                  # 组合风控报告
+bot drawdown                   # 回撤状态
+bot arbitrage                  # 扫描套利机会
+bot alerts                     # 告警历史
 ```
 
 ---
 
-## Configuration
+## 配置
 
-All config lives in `config.yaml` and `.env`.
+所有配置位于 `config.yaml` 与 `.env`。
 
-**Required keys** — `OPENAI_API_KEY`, `SERPAPI_KEY`
+**必填密钥** — `OPENAI_API_KEY`、`SERPAPI_KEY`
 
-**Optional keys** — `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`, `BING_API_KEY`, `TAVILY_API_KEY`, `DASHBOARD_API_KEY`
+**可选密钥** — `ANTHROPIC_API_KEY`、`GOOGLE_API_KEY`、`BING_API_KEY`、`TAVILY_API_KEY`、`DASHBOARD_API_KEY`
 
-**Live trading** — set `ENABLE_LIVE_TRADING=true` and add `POLYMARKET_API_KEY`, `POLYMARKET_API_SECRET`, `POLYMARKET_API_PASSPHRASE`, `POLYMARKET_PRIVATE_KEY`
-
----
-
-## Safety
-
-- Dry run by default — three independent gates (order flag, config flag, env var) must all allow live trading
-- 4-level drawdown heat system — progressively cuts position sizes, halts at 20% drawdown
-- No secrets in the codebase — everything via `.env`
-- Docker runs as non-root user
+**实盘交易** — 设置 `ENABLE_LIVE_TRADING=true`，并添加 `POLYMARKET_API_KEY`、`POLYMARKET_API_SECRET`、`POLYMARKET_API_PASSPHRASE`、`POLYMARKET_PRIVATE_KEY`
 
 ---
 
-## Tests
+## 安全说明
+
+- 默认模拟运行 — 三道独立门（订单标志、配置标志、环境变量）均须允许才会实盘
+- 四级回撤热度 — 逐步缩减仓位，20% 回撤时停止
+- 代码库不含密钥 — 全部通过 `.env` 配置
+- Docker 以非 root 用户运行
+
+---
+
+## 测试
 
 ```
 make test
@@ -262,31 +265,31 @@ make format
 
 ---
 
-## Author & Contact
+## 作者与联系方式
 
-**Dexoryn Labs** — Polymarket AI trading automation
+**Dexoryn Labs** — Polymarket AI 交易自动化
 
-- **Telegram:** [@dexoryn777](https://t.me/dexoryn777) (fastest response)
-- **WeChat:** scan to add **DexorynWe**
+- **Telegram：** [@dexoryn777](https://t.me/dexoryn777)（最快回复）
+- **微信：** 扫描添加 **DexorynWe**
 
 <p align="center">
-  <img src="wechat.png" alt="WeChat QR code — scan to add DexorynWe as a friend" width="280"/>
+  <img src="wechat.png" alt="微信二维码 — 扫描添加 DexorynWe 为好友" width="280"/>
 </p>
 
 ---
 
-## License
+## 许可证
 
 MIT
 
 ---
 
-Trading on Polymarket involves **significant risk of loss**. Dexoryn is not responsible for losses from use of this software. Wallet security, configuration, and capital risk are your responsibility.
+在 Polymarket 交易存在**重大亏损风险**。Dexoryn 不对使用本软件造成的损失负责。钱包安全、配置与资金风险由您自行承担。
 
-**Only trade with funds you can afford to lose.**
+**请仅使用您可承受损失的资金进行交易。**
 
 ---
 
-If this project helps you, consider starring the repo or opening an issue/PR. Questions: Telegram [@dexoryn777](https://t.me/dexoryn777).
+若本项目对您有帮助，欢迎 Star 仓库或提交 Issue/PR。有问题请联系 Telegram [@dexoryn777](https://t.me/dexoryn777) 或微信 **DexorynWe**。
 
-*Built for the prediction market community. Not financial advice.*
+*为预测市场社区而建。不构成投资建议。*
