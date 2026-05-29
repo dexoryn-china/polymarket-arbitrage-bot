@@ -1,0 +1,112 @@
+{
+  "run_id": "f3a1b2c4-5678-9abc-def0-1234567890ab",
+  "timestamp": "2026-02-15T14:32:01Z",
+  "market": {
+    "condition_id": "0xabc123def456",
+    "question": "Will US CPI YoY exceed 3.0% for January 2026?",
+    "market_type": "MACRO",
+    "end_date": "2026-02-28T23:59:59Z",
+    "tokens": {
+      "yes": "71321",
+      "no": "71322"
+    }
+  },
+  "orderbook": {
+    "best_bid_yes": 0.62,
+    "best_ask_yes": 0.65,
+    "spread_pct": 4.62,
+    "mid_price": 0.635,
+    "bid_depth_usd": 12450.0,
+    "ask_depth_usd": 8320.0
+  },
+  "evidence": {
+    "quality_score": 0.88,
+    "num_sources": 5,
+    "bullets": [
+      {
+        "text": "BLS reports CPI-U increased 3.1% over the last 12 months ending January 2026.",
+        "metric_name": "CPI-U YoY",
+        "metric_value": "3.1",
+        "metric_unit": "percent",
+        "metric_date": "2026-01-31",
+        "confidence": 0.97,
+        "citation": {
+          "url": "https://www.bls.gov/news.release/cpi.nr0.htm",
+          "publisher": "Bureau of Labor Statistics",
+          "date": "2026-02-12",
+          "authority_score": 1.0
+        }
+      },
+      {
+        "text": "Core CPI (excluding food and energy) rose 3.3% annually.",
+        "metric_name": "Core CPI YoY",
+        "metric_value": "3.3",
+        "metric_unit": "percent",
+        "metric_date": "2026-01-31",
+        "confidence": 0.95,
+        "citation": {
+          "url": "https://www.bls.gov/news.release/cpi.nr0.htm",
+          "publisher": "Bureau of Labor Statistics",
+          "date": "2026-02-12",
+          "authority_score": 1.0
+        }
+      },
+      {
+        "text": "Reuters confirms CPI at 3.1%, above the consensus estimate of 2.9%.",
+        "metric_name": "CPI consensus estimate",
+        "metric_value": "2.9",
+        "metric_unit": "percent",
+        "metric_date": "2026-01-31",
+        "confidence": 0.85,
+        "citation": {
+          "url": "https://reuters.com/economy/us-cpi-jan-2026",
+          "publisher": "Reuters",
+          "date": "2026-02-12",
+          "authority_score": 0.7
+        }
+      }
+    ],
+    "contradictions": [],
+    "summary": "Strong authoritative evidence confirms CPI-U YoY at 3.1% for January 2026, exceeding the 3.0% threshold. BLS primary data corroborated by Reuters and AP."
+  },
+  "forecast": {
+    "raw_probability": 0.92,
+    "calibrated_probability": 0.87,
+    "confidence": 0.90,
+    "reasoning": "BLS official data confirms CPI-U at 3.1% YoY, which directly resolves the market question affirmatively. Multiple independent sources corroborate. The slight downward calibration reflects standard extremity shrinkage."
+  },
+  "edge": {
+    "direction": "BUY_YES",
+    "edge_pct": 33.85,
+    "ev_per_dollar": 0.338,
+    "fair_price": 0.87,
+    "market_price": 0.65
+  },
+  "risk_check": {
+    "approved": true,
+    "violations": [],
+    "warnings": [
+      "High edge (33.85%) may indicate stale orderbook"
+    ],
+    "checks_passed": 9
+  },
+  "position": {
+    "stake_usd": 25.0,
+    "kelly_fraction_used": 0.25,
+    "raw_kelly_stake": 142.5,
+    "capped_reason": "max_stake_per_trade_usd"
+  },
+  "order": {
+    "side": "BUY",
+    "token_id": "71321",
+    "price": 0.65,
+    "size_usd": 25.0,
+    "slippage_tolerance": 0.02,
+    "dry_run": true
+  },
+  "execution": {
+    "status": "DRY_RUN",
+    "order_id": null,
+    "message": "Order not submitted (dry_run=true)"
+  }
+}

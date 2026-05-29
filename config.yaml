@@ -1,0 +1,140 @@
+scanning:
+  min_volume_usd: 1000
+  min_liquidity_usd: 500
+  max_spread: 0.08
+  max_days_to_expiry: 120
+  max_market_age_hours: 720
+  batch_size: 100
+  preferred_types:
+  - MACRO
+  - ELECTION
+  - CORPORATE
+  - LEGAL
+  - TECHNOLOGY
+  - SCIENCE
+  restricted_types:
+  - WEATHER
+  filter_min_score: 25
+  filter_blocked_types:
+  - UNKNOWN
+  research_cooldown_minutes: 60
+research:
+  max_sources: 10
+  source_timeout_secs: 15
+  search_provider: fallback
+  fetch_full_content: true
+  max_content_length: 15000
+  content_fetch_top_n: 5
+  min_corroborating_sources: 2
+  stale_days_penalty_threshold: 7
+  stale_days_heavy_penalty: 30
+forecasting:
+  llm_model: gpt-4o
+  llm_temperature: 0.2
+  llm_max_tokens: 4096
+  low_evidence_penalty: 0.15
+  min_evidence_quality: 0.55
+  min_confidence_level: MEDIUM
+ensemble:
+  enabled: true
+  models:
+  - gpt-4o
+  - claude-3-5-sonnet-20241022
+  - gemini-1.5-pro
+  aggregation: trimmed_mean
+  min_models_required: 1
+  fallback_model: gpt-4o
+  timeout_per_model_secs: 30
+risk:
+  max_stake_per_market: 50.0
+  max_daily_loss: 500.0
+  max_open_positions: 25
+  min_edge: 0.04
+  min_liquidity: 2000
+  min_volume: 1000
+  max_spread: 0.06
+  kelly_fraction: 0.25
+  max_bankroll_fraction: 0.05
+  bankroll: 5000.0
+  transaction_fee_pct: 0.02
+  exit_fee_pct: 0.02
+  gas_cost_usd: 0.01
+  min_implied_probability: 0.05
+  stop_loss_pct: 0.2
+  take_profit_pct: 0.3
+  max_holding_hours: 240
+  min_stake_usd: 1.0
+  volatility_high_threshold: 0.15
+  volatility_med_threshold: 0.10
+  volatility_high_min_mult: 0.4
+  volatility_med_min_mult: 0.6
+  category_stake_multipliers:
+    MACRO: 1.0
+    CORPORATE: 0.75
+    ELECTION: 0.5
+drawdown:
+  enabled: true
+  max_drawdown_pct: 0.2
+  warning_drawdown_pct: 0.1
+  critical_drawdown_pct: 0.15
+  auto_kill_at_max: true
+portfolio:
+  max_category_exposure_pct: 0.35
+  max_single_event_exposure_pct: 0.25
+  max_correlated_positions: 4
+execution:
+  dry_run: true
+  default_order_type: limit
+  slippage_tolerance: 0.01
+  max_retries: 3
+storage:
+  db_type: sqlite
+  sqlite_path: data/bot.db
+cache:
+  enabled: true
+  search_ttl_secs: 3600
+  max_cache_size_mb: 100
+  max_size: 2000
+  ttl_secs: 600
+observability:
+  log_level: INFO
+  log_format: json
+  log_file: logs/bot.log
+  enable_metrics: true
+alerts:
+  enabled: false
+  min_alert_level: info
+  alert_on_trade: true
+  alert_on_risk_breach: true
+  alert_on_drawdown_warning: true
+  alert_on_system_error: true
+  alert_on_kill_switch: true
+  daily_summary_enabled: true
+  daily_summary_hour: 18
+wallet_scanner:
+  enabled: true
+  scan_interval_minutes: 15
+  min_whale_count: 1
+  min_conviction_score: 15.0
+  max_wallets: 20
+  conviction_edge_boost: 0.08
+  conviction_edge_penalty: 0.02
+  whale_convergence_min_edge: 0.02
+scanner:
+  apiPool:
+    strategy: least-loaded          # round-robin | least-loaded | weighted-random
+    # Add custom proxy mirrors below to multiply throughput.
+    # Each endpoint gets its own independent rate limiter.
+    # Built-in: data-api-primary (60 RPM) + gamma-api-primary (60 RPM) = 120 RPM base.
+    # Example:  add 2 proxies → 60 × 4 = 240 RPM.
+    endpoints: []
+    # - name: my-proxy-1
+    #   base_url: https://my-polymarket-proxy.example.com
+    #   rpm: 60
+    #   weight: 1.0
+engine:
+  scan_interval_minutes: 10
+  max_markets_per_cycle: 10
+  auto_start: true
+  paper_mode: true
+  cycle_interval_secs: 180
